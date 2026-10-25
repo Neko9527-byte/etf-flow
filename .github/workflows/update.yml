@@ -1,0 +1,67 @@
+name: 更新数据并部署
+
+on:
+  schedule:
+    # GitHub 的 cron 是 UTC；对应北京时间 18:40、20:02、21:20、22:40（周一至周五）
+    # 以及次日 08:30、10:30（周二至周六）兜底
+    - cron: "40 10 * * 1-5"
+    - cron: "2 12 * * 1-5"
+    - cron: "20 13 * * 1-5"
+    - cron: "40 14 * * 1-5"
+    - cron: "30 0 * * 2-6"
+    - cron: "30 2 * * 2-6"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: etf-flow-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 抓取并合并最新数据
+        continue-on-error: true
+        env:
+          PYTHONUTF8: "1"
+          ETF_NO_STANDALONE: "1"
+        run: python tools/sync.py --no-snapshot
+
+      - name: 提交数据变化
+        run: |
+          git config user.name "etf-flow-bot"
+          git config user.email "etf-flow-bot@users.noreply.github.com"
+          git add data/etf_flow.json
+          if git diff --cached --quiet; then
+            echo "本次没有新增数据"
+          else
+            git commit -m "data: $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
