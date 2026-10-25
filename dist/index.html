@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ETF 细分行业资金流向 · 本地备份版</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="logo">E</div>
+    <div>
+      <div class="topbar-title">ETF 细分行业资金流向</div>
+      <div class="topbar-sub">本地离线备份 · 可自行更新</div>
+    </div>
+    <div class="topbar-spacer"></div>
+    <button class="icon-btn" id="btn-export-all" title="导出当前数据集为 JSON">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      导出数据
+    </button>
+    <button class="icon-btn" id="btn-theme" title="切换深浅色">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <span id="theme-label">深色</span>
+    </button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <h1>ETF 细分行业资金流向</h1>
+      <div class="range-line" id="range-line"></div>
+    </div>
+    <div class="hero-badges" id="hero-badges"></div>
+  </section>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="grid-2">
+    <div class="card">
+      <div class="card-head">
+        <h2>各大类规模与区间变动</h2>
+        <span class="hint">单位：亿份</span>
+      </div>
+      <div id="big-table"></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <h2>细分行业区间增减 TOP 10</h2>
+        <span class="hint" id="rank-window"></span>
+      </div>
+      <div class="rank-wrap" id="rank-wrap"></div>
+    </div>
+  </section>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="toolbar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="search" type="search" placeholder="筛选细分行业" autocomplete="off">
+    </div>
+    <div class="seg" id="ranges">
+      <button data-years="1">1 年</button>
+      <button data-years="3" class="active">3 年</button>
+      <button data-years="5">5 年</button>
+      <button data-years="0">全部</button>
+    </div>
+    <div class="spacer"></div>
+    <div class="note" id="filter-note"></div>
+  </div>
+
+  <div id="panels"></div>
+
+  <footer>
+    <div><b>口径说明：</b>“份额”指 ETF 基金份额（亿份），按细分行业汇总；区间变动为区间首日与最新交易日的份额之差及比例。变化率图中各小类以区间内首个有效数据 = 100 归一化，便于横向比较资金流向。</div>
+    <div><b>数据来源：</b>沪深交易所公开接口，由原站“B站生炸瓜”整理（<a href="https://etf-flow-d0j.pages.dev/" target="_blank" rel="noopener" style="color:var(--muted)">etf-flow-d0j.pages.dev</a>）；本页为其数据的本地备份与重制，仅供个人研究参考，不构成任何投资建议。</div>
+    <div><b>本地版本：</b><span id="build-info"></span></div>
+  </footer>
+</main>
+
+<script src="assets/echarts.min.js"></script>
+<script src="data.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
